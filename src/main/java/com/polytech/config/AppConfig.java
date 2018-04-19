@@ -1,8 +1,7 @@
 package com.polytech.config;
 
-import com.polytech.persistence.InMemoryStoryRepository;
-import com.polytech.persistence.JdbcStoryRepository;
-import com.polytech.persistence.StoryRepository;
+import com.polytech.persistence.JdbcNoteRepository;
+import com.polytech.persistence.NoteRepository;
 import com.polytech.services.FeedService;
 import com.polytech.services.PublicationService;
 import com.polytech.web.FeedController;
@@ -18,18 +17,17 @@ public class AppConfig {
 
 
     @Bean
-    public StoryRepository storyRepository(DataSource dataSource) throws SQLException {
-        return new JdbcStoryRepository(dataSource.getConnection());
+    public NoteRepository storyRepository(DataSource dataSource) throws SQLException {
+        return new JdbcNoteRepository(dataSource.getConnection());
     }
 
     @Bean
-    public FeedService
-    feedService(StoryRepository storyRepository) {
+    public FeedService feedService(NoteRepository storyRepository) {
         return new FeedService(storyRepository);
     }
 
     @Bean
-    public PublicationService publicationService(StoryRepository storyRepository) {
+    public PublicationService publicationService(NoteRepository storyRepository) {
         return new PublicationService(storyRepository);
     }
 
@@ -39,8 +37,8 @@ public class AppConfig {
     }
 
     @Bean
-    public JdbcStoryRepository jdbcStoryRepository(DataSource dataSource) throws SQLException {
-        return new JdbcStoryRepository(dataSource.getConnection());
+    public JdbcNoteRepository jdbcStoryRepository(DataSource dataSource) throws SQLException {
+        return new JdbcNoteRepository(dataSource.getConnection());
     }
 
     @Bean

@@ -1,8 +1,6 @@
 
 import com.polytech.config.AppConfig;
-import com.polytech.services.Story;
 import com.polytech.web.FeedController;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -11,7 +9,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.util.Arrays;
 import java.util.List;
 
-public class PublicationTest {
+public class NotePublicationTest {
 
 
     private FeedController feedController;
@@ -20,23 +18,20 @@ public class PublicationTest {
     public void setUp() {
         AnnotationConfigApplicationContext container = new AnnotationConfigApplicationContext(AppConfig.class);
         feedController = container.getBean(FeedController.class);
-
     }
 
-    @Test
     @Ignore
+    @Test
     public void should_post_story() {
-
         //GIVEN
-        String story = "hi Info4";
+        String note = "Note test";
 
         //WHEN
-        feedController.post(story);
+        feedController.post(note);
 
         //THEN
 
-       // List<Story> postedStories = feedController.feed();
-       // Assert.assertEquals(Arrays.asList(new Story("hi Info4")), postedStories);
-
+        //List<Note> postedNotes = feedController.feed();
+        //Assert.assertEquals(Arrays.asList(new Note("Note test")), postedNotes);
     }
 }

@@ -1,17 +1,21 @@
 package com.polytech.services;
 
-import com.polytech.persistence.StoryRepository;
+import com.polytech.persistence.NoteRepository;
 
 
 public class PublicationService {
 
-    private StoryRepository storyRepository;
+    private NoteRepository noteRepository;
 
-    public PublicationService(StoryRepository storyRepository) {
-        this.storyRepository = storyRepository;
+    public PublicationService(NoteRepository noteRepository) {
+        this.noteRepository = noteRepository;
     }
 
-    public void share(Story content) {
-        storyRepository.save(content);
+    public void post(String note) {
+        this.noteRepository.save(new Note(note)) ;
+    }
+
+    public void remove(int ID) {
+        this.noteRepository.remove(ID) ;
     }
 }
