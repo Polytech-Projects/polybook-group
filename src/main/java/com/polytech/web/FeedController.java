@@ -8,10 +8,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-@Controller
+@RestController
 public class FeedController {
 
     private PublicationService publicationService;
@@ -28,16 +32,15 @@ public class FeedController {
         return "redirect:/feed";
     }
 
-    @RequestMapping(value = "/feed", method = RequestMethod.GET)
-    public String feed(Model model) {
+    @RequestMapping(value = "/note/feed", method = RequestMethod.GET)
+    public List<Note> feed() {
         List<Note> notes = this.feedService.fetchAll() ;
-        model.addAttribute("notes", notes) ;
-        return "feed" ;
+        return notes;
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public String delete(@RequestParam int ID) {
-        this.publicationService.remove(ID) ;
-        return "feed" ;
+    @RequestMapping(value = "/note/delete", method = RequestMethod.DELETE)
+    public boolean delete(@RequestParam(value="id") int id) {
+        publicationService.remove(id);
+        return true;
     }
 }

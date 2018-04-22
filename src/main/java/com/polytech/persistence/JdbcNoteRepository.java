@@ -11,9 +11,7 @@ import java.util.List;
 
 public class JdbcNoteRepository implements NoteRepository {
 
-
     private Connection connection;
-
 
     public JdbcNoteRepository(Connection connection) {
         this.connection = connection;

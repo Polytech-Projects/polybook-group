@@ -15,7 +15,6 @@ import java.sql.SQLException;
 @Configuration
 public class AppConfig {
 
-
     @Bean
     public NoteRepository storyRepository(DataSource dataSource) throws SQLException {
         return new JdbcNoteRepository(dataSource.getConnection());
