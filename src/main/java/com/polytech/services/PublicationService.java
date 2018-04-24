@@ -18,4 +18,12 @@ public class PublicationService {
     public void remove(int ID) {
         this.noteRepository.remove(ID) ;
     }
+
+    public void update(int id, String content) {
+        noteRepository.update(id, content);
+    }
+
+    public void post(Note content) {
+        noteRepository.save(content);
+    }
 }

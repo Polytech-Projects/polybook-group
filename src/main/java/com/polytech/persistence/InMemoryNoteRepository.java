@@ -14,12 +14,22 @@ public class InMemoryNoteRepository implements NoteRepository {
     }
 
     @Override
+    public Note find(int id) {
+        return null;
+    }
+
+    @Override
     public void save(Note note) {
         database.add(note) ;
     }
 
     @Override
     public void remove(int ID) {
+
+    }
+
+    @Override
+    public void update(int id, String content) {
 
     }
 }

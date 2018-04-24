@@ -38,6 +38,17 @@ public class JdbcNoteRepository implements NoteRepository {
         }
     }
 
+    @Override
+    public void update(int id, String content) {
+        String query = "UPDATE NOTE SET CONTENT = '" + content + "' WHERE ID = " + id + ";";
+        try {
+            Statement statement = connection.createStatement();
+            statement.execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<Note> findAll() {
         String query = "SELECT * FROM NOTE";
         List<Note> stories = new ArrayList<>();
@@ -53,5 +64,23 @@ public class JdbcNoteRepository implements NoteRepository {
             e.printStackTrace();
         }
         return stories;
+    }
+
+    @Override
+    public Note find(int id) {
+        Note note = null;
+        String query = "SELECT * FROM NOTE WHERE ID = " + id + ";";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                int ID = resultSet.getInt("ID") ;
+                String content = resultSet.getString("CONTENT");
+                note = new Note(ID, content);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return note;
     }
 }

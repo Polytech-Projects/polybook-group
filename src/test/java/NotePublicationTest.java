@@ -27,7 +27,7 @@ public class NotePublicationTest {
         String note = "Note test";
 
         //WHEN
-        feedController.post(note);
+        //feedController.post(note);
 
         //THEN
 

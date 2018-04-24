@@ -6,6 +6,8 @@ public class Note {
     private int ID ;
     private String content;
 
+    public Note(){}
+
     public Note(String content) {
         this.content = content;
     }

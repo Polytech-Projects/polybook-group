@@ -15,4 +15,8 @@ public class FeedService {
     public List<Note> fetchAll() {
         return noteRepository.findAll();
     }
+
+    public Note fetchNote(int id) {
+        return noteRepository.find(id);
+    }
 }
