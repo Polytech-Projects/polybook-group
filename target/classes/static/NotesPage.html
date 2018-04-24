@@ -1,11 +1,17 @@
 <h1 class="mt-4">Vous êtes sur la page affichant toutes les notes.</h1>
+<form ng-submit="submit()">
+    <div class="form-group">
+        <label for="textAreaNote">Ecrivez votre note</label>
+        <textarea ng-model="text" name="text" class="form-control" id="textAreaNote" rows="3"></textarea>
+    </div>
+    <button type="submit" id="submit" class="btn btn-primary">Enregistrer</button>
+</form>
 <article ng-repeat="note in notes" class="card my-4">
     <div class="card-body">
         <h2 class="card-title"><a href="#">{{note.id}}</a></h2>
         <div class="card-text"><p>{{note.content}}</p></div>
     </div>
     <div class="card-footer">
-        <p class="col-sm-auto my-0 card-text"><small>Les petites options pour la carte :D</small></p>
         <img src="/open-iconic/svg/trash.svg" alt="poubelle"/>
         <img src="/open-iconic/svg/tag.svg" alt="tag"/>
         <img src="/open-iconic/svg/tags.svg" alt="tags"/>
