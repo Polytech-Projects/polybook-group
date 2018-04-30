@@ -47,9 +47,9 @@ public class FeedController {
      *
      * @param id Identifiant de la note a supprimer.
      */
-    @RequestMapping(value = "/note", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/note/delete", method = RequestMethod.DELETE)
     public void delete(@RequestParam(value="id") int id) {
-        publicationService.remove(id);
+        System.out.println(id); publicationService.remove(id);
     }
 
     /**

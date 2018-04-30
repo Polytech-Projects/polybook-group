@@ -37,8 +37,11 @@ routingApp.factory('NoteService', ['$http', function($http) {
            });
        };
 
-       serv.deleteNote =  function(cb) {
-             $http.delete('note').then(function(resp) {
+       serv.deleteNote =  function(id, cb) {
+           var req = {
+               id: id
+           };
+             $http.delete('note/delete', req) .then(function(resp) {
                cb(resp.data);
              });
          };

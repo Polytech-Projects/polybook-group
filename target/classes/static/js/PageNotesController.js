@@ -9,6 +9,7 @@ routingApp.controller('PageNotesController', ['$scope', '$http',
     };
 
     $scope.text = '...';
+
     $scope.submit = function() {
         if ($scope.text) {
             NoteService.addNote($scope.text, function(resp) {
@@ -23,6 +24,16 @@ routingApp.controller('PageNotesController', ['$scope', '$http',
             });
         }
     };
+
+    $scope.delete = function(id) {
+        if(id) {
+            NoteService.deleteNote(id, function (resp){
+                if(resp){
+                }
+            });
+            $scope.text = '';
+        }
+    }
 
     $scope.updateNotes();
 }]);
