@@ -1,6 +1,7 @@
 package com.polytech.persistence;
 
 import com.polytech.services.Note;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -12,12 +13,14 @@ import java.util.List;
 /**
  * Communication avec une base de donnee SQL (via JDBC)
  */
-public class JdbcNoteRepository implements NoteRepository {
+public class JdbcNoteRepository implements NoteRepository, LoginRepository {
 
     private Connection connection;              // Connection a la base de donnee
+    private JdbcTemplate jdbcTemplate;
 
-    public JdbcNoteRepository(Connection connection) {
+    public JdbcNoteRepository(Connection connection, JdbcTemplate jdbcTemplate) {
         this.connection = connection;
+        this.jdbcTemplate = jdbcTemplate ;
     }
 
     /**
@@ -81,20 +84,20 @@ public class JdbcNoteRepository implements NoteRepository {
      */
     public List<Note> findAll() {
         String query = "SELECT * FROM NOTE";
-        List<Note> stories = new ArrayList<>();
+        List<Note> notes = new ArrayList<>();
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next()) {                                  // Pour chaque enregistrement
-                int ID = resultSet.getInt("ID") ;
+                int id = resultSet.getInt("ID") ;
                 String content = resultSet.getString("CONTENT");
-                stories.add(new Note(ID, content));                         // Ajouter la note associee dans la liste
+                notes.add(new Note(id, content));                         // Ajouter la note associee dans la liste
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return stories;
+        return notes;
     }
 
     /**
@@ -123,5 +126,54 @@ public class JdbcNoteRepository implements NoteRepository {
             e.printStackTrace();
         }
         return note;
+    }
+
+    @Override
+    public void addUser(String userName, String password) {
+        String query ;
+
+        query = "INSERT INTO USERS VALUES('test', 'test', true);" ;
+        try {
+            Statement statement = connection.createStatement();
+            statement.execute(query);
+
+            query = "INSERT INTO AUTHORITIES VALUES('test', 'USER');" ;
+            statement.execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("ICICICIC") ;
+
+        this.findAllUser();
+    }
+
+    public void findAllUser() {
+        String query = "SELECT * FROM users";
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {                                  // Pour chaque enregistrement
+                String username = resultSet.getString("username") ;
+                String password = resultSet.getString("password");
+
+                System.out.println("USERNAME : " + username + "  PASSWORD : " + password) ;
+            }
+
+            query = "SELECT * FROM authorities";
+
+            resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {                                  // Pour chaque enregistrement
+                String username = resultSet.getString("username") ;
+                String password = resultSet.getString("authority");
+
+                System.out.println("USERNAME : " + username + "  authority : " + password) ;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

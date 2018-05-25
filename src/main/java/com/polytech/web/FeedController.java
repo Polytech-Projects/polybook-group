@@ -15,7 +15,7 @@ import java.util.UUID;
 /**
  * Controller contenant l'ensemble des actions possibles pour un utilisateur.
  */
-@RestController
+@Controller
 public class FeedController {
     private PublicationService publicationService;          // Service d'ecriture sur la base de donnee
     private FeedService feedService;                        // Service de lecture de la base de donnee
@@ -37,7 +37,7 @@ public class FeedController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/note", method = RequestMethod.GET)
+    @RequestMapping(value = "/note/get", method = RequestMethod.GET)
     public Note get(@RequestParam(value = "id") int id) {
         return this.feedService.fetchNote(id);
     }
@@ -47,9 +47,10 @@ public class FeedController {
      *
      * @param id Identifiant de la note a supprimer.
      */
-    @RequestMapping(value = "/note", method = RequestMethod.DELETE)
-    public void delete(@RequestParam(value="id") int id) {
+    @RequestMapping(value = "/note/remove", params="id", method = RequestMethod.GET)
+    public String delete(@RequestParam("id") int id) {
         publicationService.remove(id);
+        return "redirect:/notes";
     }
 
     /**
@@ -58,11 +59,10 @@ public class FeedController {
      * @param content Contenu de la note.
      * @return Renvoie true si bon fonctionnement.
      */
-    @RequestMapping(value = "/note", method = RequestMethod.POST)
-    public boolean post(@RequestBody() Note content) {
-    //public boolean post(@RequestParam(value = "content") String content) {
+    @RequestMapping(value = "/note/share", method = RequestMethod.POST)
+    public String post(String content) {
         publicationService.post(content);
-        return true;
+        return "redirect:/notes";
     }
 
     /**
@@ -71,19 +71,34 @@ public class FeedController {
      * @param id Identifiant de la note a modifier.
      * @param content Nouveau contenu de la note.
      */
-    @RequestMapping(value = "/note/update", method = RequestMethod.POST)
-    public void update(@RequestParam(value="id") int id, @RequestParam(value = "content") String content) {
+    @RequestMapping(value = "/note/update", params = { "id", "content" }, method = RequestMethod.POST)
+    public String update(@RequestParam(value="id") int id,String content) {
         publicationService.update(id, content);
+        return "redirect:/notes";
+    }
+
+    /**
+     * Demande de modification d'une note avec un identifiant donne et le texte modifie.
+     *
+     * @param id Identifiant de la note a modifier.
+     * @param content Nouveau contenu de la note.
+     */
+    @RequestMapping(value = "/note/modify", params = { "id", "content" }, method = RequestMethod.GET)
+    public String modify(@RequestParam(value="id") int id, @RequestParam(value = "content") String content, Model model) {
+        model.addAttribute("toModifyContent", content) ;
+        model.addAttribute("toModifyId", id) ;
+        return "modifyNote" ;
     }
 
     /**
      * Demande de recuperation de l'ensemble des notes.
      *
-     * @return Renvoie une liste de toutes les notes connues.
+     * @return La page d'affichage des notes.
      */
     @RequestMapping(value = "/notes", method = RequestMethod.GET)
-    public List<Note> feed() {
+    public String feed(Model model) {
         List<Note> notes = this.feedService.fetchAll();
-        return notes;
+        model.addAttribute("notes", notes);
+        return "notes";
     }
 }

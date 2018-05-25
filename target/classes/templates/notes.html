@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>
+        Polykeep :D
+    </title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">Polykeep</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">
+                        <span>Accueil</span>
+                    </a>
+                </li>
+                <li class="nav-item" ui-sref-active="active">
+                    <a ui-sref="/notes" ui-sref-active="active" class="nav-link">
+                        <span>Mes notes</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+<div class="container">
+    <h1 class="mt-4">Vous êtes sur la page affichant toutes les notes.</h1>
+    <form action="/note/share" method="post" role="form">
+        <div class="form-group">
+            <label for="textAreaNote">Ecrivez votre note</label>
+            <textarea name="content" class="form-control" id="textAreaNote" rows="3"></textarea>
+        </div>
+        <button type="submit" id="submit" class="btn btn-primary">Enregistrer</button>
+    </form>
+    <article th:each="note :${notes}" class="card my-4">
+        <div class="card-body">
+            <h2 class="card-title"><a href="#"><span th:text="${note.id}"></span></a></h2>
+            <div class="card-text"><p><span th:text="${note.content}"></span></p></div>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-default btn-sm" th:onclick="'window.location.href=\'/note/remove?id=' + ${note.id} + '\''">
+                <span class="glyphicon glyphicon-trash"></span> Remove
+            </button>
+            <button type="button" class="btn btn-default btn-sm" th:onclick="'window.location.href=\'' + @{/note/modify(id= ${note.id}, content= ${note.content})} + '\''">
+                <span class="glyphicon glyphicon-edit"></span> Modify
+            </button>
+        </div>
+    </article>
+</div>
+<footer class="container-fluid">
+    <p class="text-center">Tous droits réservé - Copyright 2018</p>
+</footer>
+</body>
+</html>

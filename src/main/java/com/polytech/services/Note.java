@@ -6,10 +6,8 @@ import java.util.Objects;
  * Structure de donnee pour une note.
  */
 public class Note {
-    private int ID ;                // Identifiant d'une note. ( Unique )
-    private String content;         // Contenu.
-
-    public Note(){}
+    public int id ;                // Identifiant d'une note. ( Unique )
+    public String content;         // Contenu.
 
     /**
      * Constructeur.
@@ -27,7 +25,7 @@ public class Note {
      * @param content Contenu de la note.
      */
     public Note(int ID, String content) {
-        this.ID = ID ;
+        this.id = ID ;
         this.content = content ;
     }
 
@@ -75,6 +73,6 @@ public class Note {
      * @return ID
      */
     public int getID() {
-        return ID;
+        return id;
     }
 }
