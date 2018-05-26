@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.security.Principal;
 import java.util.List;
 
+/**
+ * Controller lié aux commentaires
+ */
 @Controller
 public class CommentaryController {
     private CommentaryFeedService commentaryFeedService;
@@ -22,6 +25,14 @@ public class CommentaryController {
         this.feedService = feedService ;
     }
 
+    /**
+     * Ajout d'un commentaire
+     *
+     * @param id_Note
+     * @param content
+     * @param principal
+     * @return
+     */
     @RequestMapping(value = "/commentary/share", method = RequestMethod.POST)
     public String post(@RequestParam(value="id_Note") int id_Note,String content, Principal principal) {
         commentaryPublicationService.post(id_Note, content, principal.getName());

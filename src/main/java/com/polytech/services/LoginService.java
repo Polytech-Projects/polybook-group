@@ -2,6 +2,9 @@ package com.polytech.services;
 
 import com.polytech.persistence.LoginRepository;
 
+/**
+ * Service de creation d'un utilisateur
+ */
 public class LoginService {
     private LoginRepository loginRepository;
 
@@ -9,6 +12,12 @@ public class LoginService {
         this.loginRepository = loginRepository ;
     }
 
+    /**
+     * Demande de creation d'un utilisateur
+     *
+     * @param userName Nom utilisateur
+     * @param password Mot de passe chiffre
+     */
     public void addUser(String userName, String password) {
         loginRepository.addUser(userName, password) ;
     }
