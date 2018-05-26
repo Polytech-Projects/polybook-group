@@ -32,6 +32,6 @@ public class LoginController {
         String hashedPassword = passwordEncoder.encode(password);
 
         loginService.addUser(username, hashedPassword) ;
-        return "redirect:index.html" ;
+        return "redirect:/login" ;
     }
 }

@@ -27,18 +27,44 @@
                         <span>Mes notes</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="/notes/collaborationNotes" class="nav-link">
+                        <span>Notes en collaboration</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profil" class="nav-link">
+                        <span>Profil</span>
+                    </a>
+                </li>
             </ul>
         </div>
+
+        <a href="/logout">Logout</a>
     </nav>
 </header>
+<h1 class="text-center">Page de modification d'une note</h1>
+<div class="w-50 mx-auto">
+    Ici, vous pouvez modifier le contenu d'une note, ainsi que les personnes en collaborations.
+    Pour rajouter un collaborateur à une note vous devez l'avoir en collaborateur. ( voir votre page de profil )
+</div>
 
-<form th:action="@{/note/update(id= ${toModifyId})}" method="post" role="form">
+<div class="p1"></div>
+
+<form th:action="@{/note/update(id= ${toModifyId})}" method="post" role="form" class="w-50 mx-auto">
     <div class="form-group">
         <label for="textAreaNote">Ecrivez votre note</label>
         <textarea name="content" class="form-control" id="textAreaNote" rows="3" th:text="${toModifyContent}"></textarea>
     </div>
     <button type="submit" id="submit" class="btn btn-primary">Modifier</button>
 </form>
+<div class="w-25 mx-auto">
+    <form th:action="@{/notes/addCollaborateur(id=${toModifyId})}" method="post" role="form">
+        <label for="textAreaNote">Nom du collaborateur :</label>
+        <textarea name="collaborateur" class="form-control" id="addCollaborateurTextArea" rows="1" cols="10"></textarea>
+        <button type="submit" id="addCollaborateurSubmit" class="btn btn-primary">Ajouter</button>
+    </form>
+</div>
 
 <footer class="container-fluid">
     <p class="text-center">Tous droits réservés - Copyright 2018</p>

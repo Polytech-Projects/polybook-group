@@ -1,12 +1,10 @@
 package com.polytech.config;
 
-import com.polytech.persistence.JdbcNoteRepository;
-import com.polytech.persistence.LoginRepository;
-import com.polytech.persistence.NoteRepository;
-import com.polytech.services.FeedService;
-import com.polytech.services.LoginService;
-import com.polytech.services.PublicationService;
+import com.polytech.persistence.*;
+import com.polytech.services.*;
+import com.polytech.web.CommentaryController;
 import com.polytech.web.FeedController;
+import com.polytech.web.ProfilController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,13 +24,23 @@ public class AppConfig {
     }
 
     @Bean
-    public NoteRepository storyRepository(DataSource dataSource, JdbcTemplate jdbcTemplate) throws SQLException {
-        return new JdbcNoteRepository(dataSource.getConnection(), jdbcTemplate);
+    public CommentaryRepository commentaryRepository(JdbcTemplate jdbcTemplate) throws SQLException {
+        return new JdbcCommentaryRepository(jdbcTemplate);
     }
 
     @Bean
-    public LoginRepository loginRepository(DataSource dataSource, JdbcTemplate jdbcTemplate) throws SQLException {
-        return new JdbcNoteRepository(dataSource.getConnection(), jdbcTemplate);
+    public NoteRepository storyRepository(JdbcTemplate jdbcTemplate) throws SQLException {
+        return new JdbcNoteRepository(jdbcTemplate);
+    }
+
+    @Bean
+    public CollaborateurRepository collaborateurRepository(JdbcTemplate jdbcTemplate) throws SQLException {
+        return new JdbcCollaborateurRepository(jdbcTemplate);
+    }
+
+    @Bean
+    public LoginRepository loginRepository(JdbcTemplate jdbcTemplate) throws SQLException {
+        return new JdbcNoteRepository(jdbcTemplate);
     }
 
     @Bean
@@ -56,8 +64,38 @@ public class AppConfig {
     }
 
     @Bean
-    public JdbcNoteRepository jdbcStoryRepository(DataSource dataSource, JdbcTemplate jdbcTemplate) throws SQLException {
-        return new JdbcNoteRepository(dataSource.getConnection(), jdbcTemplate);
+    public CommentaryFeedService commentaryFeedService(CommentaryRepository commentaryRepository) {
+        return new CommentaryFeedService(commentaryRepository);
+    }
+
+    @Bean
+    public CommentaryPublicationService commentaryPublicationService(CommentaryRepository commentaryRepository) {
+        return new CommentaryPublicationService(commentaryRepository);
+    }
+
+    @Bean
+    public CommentaryController commentaryController(CommentaryFeedService commentaryFeedService, CommentaryPublicationService commentaryPublicationService, FeedService feedService) {
+        return new CommentaryController(commentaryFeedService, commentaryPublicationService, feedService);
+    }
+
+    @Bean
+    public CollaborateurFeedService collaborateurFeedService(CollaborateurRepository collaborateurRepository) {
+        return new CollaborateurFeedService(collaborateurRepository);
+    }
+
+    @Bean
+    public CollaborateurPublicationService collaborateurPublicationService(CollaborateurRepository collaborateurRepository) {
+        return new CollaborateurPublicationService(collaborateurRepository);
+    }
+
+    @Bean
+    public ProfilController profilController(CollaborateurFeedService collaborateurFeedService, CollaborateurPublicationService collaborateurPublicationService) {
+        return new ProfilController(collaborateurFeedService, collaborateurPublicationService) ;
+    }
+
+    @Bean
+    public JdbcNoteRepository jdbcStoryRepository(JdbcTemplate jdbcTemplate) throws SQLException {
+        return new JdbcNoteRepository(jdbcTemplate);
     }
 
     @Bean

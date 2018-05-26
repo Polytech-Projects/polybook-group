@@ -1,5 +1,6 @@
 package com.polytech.services;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -8,6 +9,7 @@ import java.util.Objects;
 public class Note {
     public int id ;                // Identifiant d'une note. ( Unique )
     public String content;         // Contenu.
+    public List<Collaborateur> collaborateurs ;
 
     /**
      * Constructeur.
@@ -16,6 +18,16 @@ public class Note {
      */
     public Note(String content) {
         this.content = content;
+    }
+
+    /**
+     * Constructeur.
+     *
+     * @param content Contenu de la note.
+     */
+    public Note(String content, List<Collaborateur> collaborateurs) {
+        this.content = content;
+        this.collaborateurs = collaborateurs ;
     }
 
     /**
@@ -74,5 +86,9 @@ public class Note {
      */
     public int getID() {
         return id;
+    }
+
+    public void setCollaborateurs(List<Collaborateur> collaborateurs) {
+        this.collaborateurs = collaborateurs ;
     }
 }

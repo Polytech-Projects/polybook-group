@@ -26,13 +26,25 @@
                         <span>Accueil</span>
                     </a>
                 </li>
-                <li class="nav-item" ui-sref-active="active">
-                    <a ui-sref="/notes" ui-sref-active="active" class="nav-link">
+                <li class="nav-item">
+                    <a href="/notes" class="nav-link">
                         <span>Mes notes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/notes/collaborationNotes" class="nav-link">
+                        <span>Notes en collaboration</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profil" class="nav-link">
+                        <span>Profil</span>
                     </a>
                 </li>
             </ul>
         </div>
+
+        <a href="/logout">Logout</a>
     </nav>
 </div>
 <div class="container">
@@ -46,16 +58,41 @@
     </form>
     <article th:each="note :${notes}" class="card my-4">
         <div class="card-body">
-            <h2 class="card-title"><a href="#"><span th:text="${note.id}"></span></a></h2>
+            <h2 class="card-title"><a th:href="@{/commentary/noteDetails(id=${note.id})}"><span th:text="${note.id}"></span></a></h2>
             <div class="card-text"><p><span th:text="${note.content}"></span></p></div>
         </div>
         <div class="card-footer">
             <button type="button" class="btn btn-default btn-sm" th:onclick="'window.location.href=\'/note/remove?id=' + ${note.id} + '\''">
                 <span class="glyphicon glyphicon-trash"></span> Remove
             </button>
-            <button type="button" class="btn btn-default btn-sm" th:onclick="'window.location.href=\'' + @{/note/modify(id= ${note.id}, content= ${note.content})} + '\''">
+            <button type="button" class="btn btn-default btn-sm" th:onclick="'window.location.href=\'' + @{/note/modify(id= ${note.id})} + '\''">
                 <span class="glyphicon glyphicon-edit"></span> Modify
             </button>
+
+            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" th:attr="data-target='#myModal'+${note.id}">Informations sur la note</button>
+
+            <!-- Modal -->
+            <div class="modal fade" th:id="'myModal'+${note.id}" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Informations sur la note :</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>Vous partagez cette note avec : </p>
+                            <li th:each="collab :${note.collaborateurs}">
+                                <span th:text="${collab.name}"></span>
+                            </li>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </article>
 </div>

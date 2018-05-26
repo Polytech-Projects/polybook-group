@@ -24,18 +24,13 @@ public class FeedService {
      *
      * @return Liste des notes sauvegardees.
      */
-    public List<Note> fetchAll() {
-        return noteRepository.findAll();
+    public List<Note> fetchAll(String userName) {
+        return noteRepository.findAll(userName);
     }
 
-    /**
-     * Demande de lecture d'une note avec un identifiant donne.
-     *
-     * @param id Identifiant de la note a recuperer.
-     *
-     * @return Renvoie la note associee.
-     */
-    public Note fetchNote(int id) {
-        return noteRepository.find(id);
+    public List<Note> find(int id) {return noteRepository.find(id);}
+
+    public List<Note> fetchAllCollaborationNote(String username) {
+        return noteRepository.findAllCollaborationNote(username) ;
     }
 }

@@ -1,7 +1,9 @@
 package com.polytech.persistence;
 
+import com.polytech.services.Collaborateur;
 import com.polytech.services.Note;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -15,66 +17,43 @@ import java.util.List;
  */
 public class JdbcNoteRepository implements NoteRepository, LoginRepository {
 
-    private Connection connection;              // Connection a la base de donnee
     private JdbcTemplate jdbcTemplate;
 
-    public JdbcNoteRepository(Connection connection, JdbcTemplate jdbcTemplate) {
-        this.connection = connection;
+    public JdbcNoteRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate ;
     }
 
     /**
      * Sauvegarde dans la base de donnee : insertion SQL
      *
-     * A PROTEGER DES INJECTIONS SQL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     *
      * @param note Note a sauvegarder.
      */
-    public void save(Note note) {
-        String query = "INSERT INTO NOTE (CONTENT)VALUES('" + note.getContent() + "')";
-        try {
-            Statement statement = connection.createStatement();
-            statement.execute(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void save(Note note, String userName) {
+        String query = "INSERT INTO NOTE (CONTENT, username)VALUES(?,?)" ;
+        jdbcTemplate.update(query, note.getContent(), userName);
     }
 
     /**
      * Suppression d'une note de la base de donnee : DELETE sql
      *
-     * A PROTEGER DES INJECTIONS SQL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     *
      * @param ID Identifiant de la note a supprimer.
      */
     @Override
-    public void remove(int ID) {
-        String query = "DELETE FROM NOTE WHERE ID =" + ID + " ;";
-        try {
-            Statement statement = connection.createStatement();
-            statement.execute(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void remove(int ID, String userName) {
+        String query = "DELETE FROM NOTE WHERE ID=? AND username=?";
+        jdbcTemplate.update(query, ID, userName) ;
     }
 
     /**
      * Modification d'une note donnee : UPDATE sql
      *
-     * A PROTEGER DES INJECTIONS SQL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     *
      * @param id identification  de la note a modifier.
      * @param content Nouveau contenu de la note.
      */
     @Override
-    public void update(int id, String content) {
-        String query = "UPDATE NOTE SET CONTENT = '" + content + "' WHERE ID = " + id + ";";
-        try {
-            Statement statement = connection.createStatement();
-            statement.execute(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void update(int id, String content, String userName) {
+        String query = "UPDATE NOTE SET CONTENT = ? WHERE ID = ? AND username = ? ;";
+        jdbcTemplate.update(query, content, id, userName) ;
     }
 
     /**
@@ -82,98 +61,102 @@ public class JdbcNoteRepository implements NoteRepository, LoginRepository {
      *
      * @return Liste des notes contenues dans la base de donne
      */
-    public List<Note> findAll() {
-        String query = "SELECT * FROM NOTE";
-        List<Note> notes = new ArrayList<>();
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
+    public List<Note> findAll(String userName) {
+        String query = "SELECT * FROM NOTE WHERE username = '" + userName + "' ;";
+        List<Note> notes = jdbcTemplate.query(query, new NoteMapper());
 
-            while (resultSet.next()) {                                  // Pour chaque enregistrement
-                int id = resultSet.getInt("ID") ;
-                String content = resultSet.getString("CONTENT");
-                notes.add(new Note(id, content));                         // Ajouter la note associee dans la liste
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (int i=0; i<notes.size(); i++) {
+            Note n = notes.get(i) ;
+
+            List<Collaborateur> collaborateurs ;
+
+            query = "SELECT * FROM NOTEINCOLLAB WHERE ID_NOTE = '" + n.id + "' ;";
+            collaborateurs = jdbcTemplate.query(query, new CollabMapper()) ;
+
+            n.setCollaborateurs(collaborateurs);
         }
-        return notes;
+
+        return notes ;
     }
 
-    /**
-     * Recupere une note precise dans la base de donnee a partir de son identifiant.
-     *
-     * A PROTEGER DES INJECTIONS SQL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     *
-     * @param id Identifiant de la note a recuperer.
-     *
-     * @return La note correspondante
-     */
-    @Override
-    public Note find(int id) {
-        Note note = null;
-        String query = "SELECT * FROM NOTE WHERE ID = " + id + ";";
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
+    class NoteMapper implements RowMapper<Note> {
 
-            while (resultSet.next()) {
-                int ID = resultSet.getInt("ID") ;
-                String content = resultSet.getString("CONTENT");
-                note = new Note(ID, content);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        @Override
+        public Note mapRow(ResultSet rs, int rowNum) throws SQLException {
+            String content = rs.getString("CONTENT");
+            int id = rs.getInt("ID") ;
+            return new Note(id, content);
         }
-        return note;
     }
 
     @Override
     public void addUser(String userName, String password) {
-        String query ;
+        String query;
 
-        query = "INSERT INTO USERS VALUES('test', 'test', true);" ;
-        try {
-            Statement statement = connection.createStatement();
-            statement.execute(query);
+        query = "INSERT INTO USERS VALUES(?, ?, true);";
+        jdbcTemplate.update(query, userName, password) ;
 
-            query = "INSERT INTO AUTHORITIES VALUES('test', 'USER');" ;
-            statement.execute(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("ICICICIC") ;
-
-        this.findAllUser();
+        query = "INSERT INTO AUTHORITIES VALUES(?, 'USER');";
+        jdbcTemplate.update(query, userName) ;
     }
 
-    public void findAllUser() {
-        String query = "SELECT * FROM users";
+    public List<Note> find(int id) {
+        String query = "SELECT * FROM NOTE WHERE ID = '" + id + "' ;";
+        List<Note> notes = jdbcTemplate.query(query, new NoteMapper());
 
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
+        List<Collaborateur> collaborateurs ;
+        for (Note n : notes) {
+            query = "SELECT * FROM NOTEINCOLLAB WHERE ID_NOTE = '" + id + "' ;";
+            collaborateurs = jdbcTemplate.query(query, new CollabMapper()) ;
 
-            while (resultSet.next()) {                                  // Pour chaque enregistrement
-                String username = resultSet.getString("username") ;
-                String password = resultSet.getString("password");
+            n.setCollaborateurs(collaborateurs);
+        }
 
-                System.out.println("USERNAME : " + username + "  PASSWORD : " + password) ;
-            }
+        return notes ;
+    }
 
-            query = "SELECT * FROM authorities";
+    @Override
+    public void addCollaborateur(int id, Collaborateur collaborateur, String demandeur) {
+        String query =  "SELECT count(*) FROM COLLABORATEUR WHERE (CollaborateurA = ? AND CollaborateurB = ?) OR (CollaborateurA = ? AND CollaborateurB = ?);" ;
+        Integer count = jdbcTemplate.queryForObject(query, Integer.class, collaborateur.name, demandeur, demandeur, collaborateur.name);
 
-            resultSet = statement.executeQuery(query);
+        boolean resulta = (count > 0) ? true : false ;
 
-            while (resultSet.next()) {                                  // Pour chaque enregistrement
-                String username = resultSet.getString("username") ;
-                String password = resultSet.getString("authority");
+        query =  "SELECT count(*) FROM NOTEINCOLLAB WHERE (ID_NOTE=? AND Collaborateur=?) ;" ;
+        count = jdbcTemplate.queryForObject(query, Integer.class, id, collaborateur.name);
 
-                System.out.println("USERNAME : " + username + "  authority : " + password) ;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        boolean resultb = (count > 0) ? false : true ;
+
+        if (resulta && resultb) {
+            query = "INSERT INTO NOTEINCOLLAB (ID_NOTE, Collaborateur)VALUES(?,?)";
+            jdbcTemplate.update(query, id, collaborateur.name);
+        }
+    }
+
+    @Override
+    public List<Note> findAllCollaborationNote(String username) {
+        String query = "SELECT NOTE.ID, NOTE.CONTENT FROM NOTE JOIN NOTEINCOLLAB ON NOTE.ID=NOTEINCOLLAB.ID_NOTE WHERE NOTEINCOLLAB.Collaborateur = '" + username + "' ;";
+        List<Note> notes = jdbcTemplate.query(query, new NoteMapper());
+
+        List<Collaborateur> collaborateurs ;
+        for (Note n : notes) {
+            query = "SELECT * FROM NOTEINCOLLAB WHERE ID_NOTE = '" + n.id + "' ;";
+            collaborateurs = jdbcTemplate.query(query, new CollabMapper()) ;
+
+            n.setCollaborateurs(collaborateurs);
+
+            collaborateurs = null ;
+        }
+
+        return notes ;
+    }
+
+    class CollabMapper implements RowMapper<Collaborateur> {
+
+        @Override
+        public Collaborateur mapRow(ResultSet rs, int rowNum) throws SQLException {
+            String name = rs.getString("Collaborateur");
+            return new Collaborateur(name);
         }
     }
 }

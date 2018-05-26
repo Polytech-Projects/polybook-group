@@ -2,6 +2,8 @@ package com.polytech.services;
 
 import com.polytech.persistence.NoteRepository;
 
+import java.security.Principal;
+
 /**
  * Service d'ecriture sur la base de donnee.
  */
@@ -22,8 +24,8 @@ public class PublicationService {
      *
      * @param contenu Contenu de la note a sauvegarder.
      */
-    public void post(String contenu) {
-        this.noteRepository.save(new Note(contenu)) ;           // Creation d'une note et demande de sauvegarde.
+    public void post(String contenu, String userName) {
+        this.noteRepository.save(new Note(contenu), userName) ;           // Creation d'une note et demande de sauvegarde.
     }
 
     /**
@@ -31,8 +33,8 @@ public class PublicationService {
      *
      * @param ID Identifiant de la note a sauvegarder.
      */
-    public void remove(int ID) {
-        this.noteRepository.remove(ID) ;
+    public void remove(int ID, String userName) {
+        this.noteRepository.remove(ID, userName) ;
     }
 
     /**
@@ -41,8 +43,8 @@ public class PublicationService {
      * @param id Identifiant de la note a modifier.
      * @param content Nouveau contenu de la note.
      */
-    public void update(int id, String content) {
-        noteRepository.update(id, content);
+    public void update(int id, String content, String userName) {
+        noteRepository.update(id, content, userName);
     }
 
     /**
@@ -50,7 +52,11 @@ public class PublicationService {
      *
      * @param note Note a sauvegarder.
      */
-    public void post(Note note) {
-        noteRepository.save(note);
+    public void post(Note note, String userName) {
+        noteRepository.save(note, userName);
+    }
+
+    public void addCollaborateur(int id, String collaborateur, String demandeur) {
+        noteRepository.addCollaborateur(id, new Collaborateur(collaborateur), demandeur) ;
     }
 }

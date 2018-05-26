@@ -48,31 +48,18 @@
     </nav>
 </div>
 <div class="container">
-    <h1 class="mt-4">Vous êtes sur la page affichant toutes les notes.</h1>
-    <form action="/note/share" method="post" role="form">
-        <div class="form-group">
-            <label for="textAreaNote">Ecrivez votre note</label>
-            <textarea name="content" class="form-control" id="textAreaNote" rows="3"></textarea>
-        </div>
-        <button type="submit" id="submit" class="btn btn-primary">Enregistrer</button>
-    </form>
+    <h1 class="mt-4">Vous êtes sur la page affichant toutes les notes en collaborations.</h1>
+
     <article th:each="note :${notes}" class="card my-4">
         <div class="card-body">
             <h2 class="card-title"><a th:href="@{/commentary/noteDetails(id=${note.id})}"><span th:text="${note.id}"></span></a></h2>
             <div class="card-text"><p><span th:text="${note.content}"></span></p></div>
         </div>
         <div class="card-footer">
-            <button type="button" class="btn btn-default btn-sm" th:onclick="'window.location.href=\'/note/remove?id=' + ${note.id} + '\''">
-                <span class="glyphicon glyphicon-trash"></span> Remove
-            </button>
-            <button type="button" class="btn btn-default btn-sm" th:onclick="'window.location.href=\'' + @{/note/modify(id= ${note.id})} + '\''">
-                <span class="glyphicon glyphicon-edit"></span> Modify
-            </button>
-
-            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" th:attr="data-target='#myModal'+${note.id}">Informations sur la note</button>
+            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Informations sur la note</button>
 
             <!-- Modal -->
-            <div class="modal fade" th:id="'myModal'+${note.id}" role="dialog">
+            <div class="modal fade" id="myModal" role="dialog">
                 <div class="modal-dialog">
 
                     <!-- Modal content-->

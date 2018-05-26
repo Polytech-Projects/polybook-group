@@ -20,28 +20,8 @@ public class NotePublicationTest {
     private FeedController feedController;
     private JdbcNoteRepository test ;
 
-    @Before
-    public void init() {
-        try{
-            DataSource ds = new EmbeddedDatabaseBuilder().addScripts("schema.sql").build();
-            this.test = new JdbcNoteRepository(ds.getConnection(), new JdbcTemplate(ds)) ;
-        } catch (Exception e) {System.out.println("ERREUR") ;}
-    }
 
-
-    @Test
     public void should_post_story() {
-        System.out.println("LOL") ;
-
-        test.addUser("test", "test");
-
-        BCryptPasswordEncoder test1 = new BCryptPasswordEncoder() ;
-
-        System.out.println(test1.encode("zeros")) ;
-
-        test1 = new BCryptPasswordEncoder() ;
-
-        System.out.println(test1.encode("zeros")) ;
         //GIVEN
         //String note = "Note test";
 
