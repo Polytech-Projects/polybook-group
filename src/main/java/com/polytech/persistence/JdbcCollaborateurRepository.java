@@ -44,8 +44,8 @@ public class JdbcCollaborateurRepository implements CollaborateurRepository {
 
         boolean resultb = (count > 0) ? false : true ;
 
-                        // Si collaborateur existe et pas deja collaborateur alors ajout dans la base de donnée.
-        if (resulta && resultb) {
+                        // Si collaborateur existe et pas deja collaborateur alors ajout dans la base de donnée et que pas rajout de soit meme.
+        if (resulta && resultb && (collaborateur.name != demandeur)) {
             query = "INSERT INTO COLLABORATEUR (CollaborateurA, CollaborateurB)VALUES(?,?)";
             jdbcTemplate.update(query, demandeur, collaborateur.name);
         }
