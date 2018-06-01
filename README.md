@@ -5,6 +5,14 @@
 
 # Description
 
-blablablah
+Projet INFO 4A Polytech marseille.
 
 # Fonctionnalités
+
+Enregistrement / Connection
+Creations de notes ainsi que suppression et modification possible.
+Page de profil utilisateur : 
+    - Ajout de collaborateurs ( personnes pouvant participer collectivement à une note )
+
+Possibilité d'ajouter un collaborateur à une note.
+Commenter une note et observer les commentaires.
